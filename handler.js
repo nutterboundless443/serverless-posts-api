@@ -3,19 +3,23 @@ const dynamo = new AWS.DynamoDB.DocumentClient();
 const tableName = 'Posts';
 
 module.exports.createPost = async (event) => {
-  const data = JSON.parse(event.body);
-  const params = {
-    TableName: tableName,
-    Item: {
-      id: data.id,
-      title: data.title,
-      content: data.content,
-      createdAt: new Date().toISOString()
-    }
-  };
+  try {
+    const data = JSON.parse(event.body);
+    const params = {
+      TableName: tableName,
+      Item: {
+        id: data.id,
+        title: data.title,
+        content: data.content,
+        createdAt: new Date().toISOString()
+      }
+    };
 
-  await dynamo.put(params).promise();
-  return { statusCode: 201, body: JSON.stringify(params.Item) };
+    await dynamo.put(params).promise();
+    return { statusCode: 201, body: JSON.stringify(params.Item) };
+  } catch (error) {
+    return { statusCode: 400, body: JSON.stringify({ error: 'Invalid input' }) };
+  }
 };
 
 module.exports.getPosts = async () => {
