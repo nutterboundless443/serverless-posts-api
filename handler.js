@@ -43,6 +43,9 @@ module.exports.updatePost = async (event) => {
   };
 
   const result = await dynamo.update(params).promise();
+  if (!result.Attributes) {
+    return { statusCode: 404, body: JSON.stringify({ error: 'Post not found' }) };
+  }
   return { statusCode: 200, body: JSON.stringify(result.Attributes) };
 };
 
