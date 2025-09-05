@@ -11,6 +11,7 @@ provider:
         - dynamodb:GetItem
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
+        - dynamodb:Scan
       Resource: arn:aws:dynamodb:${opt:region, 'us-east-1'}:*:table/Posts
 
 functions:
