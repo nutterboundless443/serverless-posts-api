@@ -32,25 +32,29 @@ module.exports.getPosts = async () => {
 };
 
 module.exports.updatePost = async (event) => {
-  const data = JSON.parse(event.body);
-  const params = {
-    TableName: tableName,
-    Key: {
-      id: event.pathParameters.id
-    },
-    UpdateExpression: 'set title = :title, content = :content',
-    ExpressionAttributeValues: {
-      ':title': data.title,
-      ':content': data.content
-    },
-    ReturnValues: 'ALL_NEW'
-  };
+  try {
+    const data = JSON.parse(event.body);
+    const params = {
+      TableName: tableName,
+      Key: {
+        id: event.pathParameters.id
+      },
+      UpdateExpression: 'set title = :title, content = :content',
+      ExpressionAttributeValues: {
+        ':title': data.title,
+        ':content': data.content
+      },
+      ReturnValues: 'ALL_NEW'
+    };
 
-  const result = await dynamo.update(params).promise();
-  if (!result.Attributes) {
-    return { statusCode: 404, body: JSON.stringify({ error: 'Post not found' }) };
+    const result = await dynamo.update(params).promise();
+    if (!result.Attributes) {
+      return { statusCode: 404, body: JSON.stringify({ error: 'Post not found' }) };
+    }
+    return { statusCode: 200, body: JSON.stringify(result.Attributes) };
+  } catch (error) {
+    return { statusCode: 400, body: JSON.stringify({ error: 'Invalid input' }) };
   }
-  return { statusCode: 200, body: JSON.stringify(result.Attributes) };
 };
 
 module.exports.deletePost = async (event) => {
