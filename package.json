@@ -1,0 +1,12 @@
+{
+  "name": "serverless-posts-api",
+  "version": "1.0.0",
+  "description": "A serverless API for managing blog posts",
+  "main": "handler.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.1000.0"
+  }
+}
