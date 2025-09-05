@@ -1,0 +1,59 @@
+service: serverless-posts-api
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  region: us-east-1
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:PutItem
+        - dynamodb:GetItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: arn:aws:dynamodb:${opt:region, 'us-east-1'}:*:table/Posts
+
+functions:
+  createPost:
+    handler: handler.createPost
+    events:
+      - http:
+          path: posts
+          method: post
+
+  getPosts:
+    handler: handler.getPosts
+    events:
+      - http:
+          path: posts
+          method: get
+
+  updatePost:
+    handler: handler.updatePost
+    events:
+      - http:
+          path: posts/{id}
+          method: put
+
+  deletePost:
+    handler: handler.deletePost
+    events:
+      - http:
+          path: posts/{id}
+          method: delete
+
+resources:
+  Resources:
+    Posts:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: Posts
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
